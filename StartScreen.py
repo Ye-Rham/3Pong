@@ -1,7 +1,8 @@
 import pygame.font
 
-class Title():
-    def __init__(self, screen, msg):
+
+class Title:
+    def __init__(self, screen, msg, line):
         self.screen = screen
         self.screen_rect = screen.get_rect()
 
@@ -10,7 +11,10 @@ class Title():
         self.font = pygame.font.SysFont(None, 72)
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
-        self.rect.centerx, self.rect.centery = self.screen_rect.centerx, self.screen_rect.centery/2
+        self.rect.centerx, self.rect.centery = self.screen_rect.centerx, self.screen_rect.centery/2 + line
+
+        self.msg_image = None
+        self.msg_image_rect = None
 
         self.prep_msg(msg)
 
@@ -22,7 +26,8 @@ class Title():
     def draw(self):
         self.screen.blit(self.msg_image, self.msg_image_rect)
 
-class Button():
+
+class Button:
     def __init__(self, screen, msg):
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -34,6 +39,9 @@ class Button():
 
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = self.screen_rect.center
+
+        self.msg_image = None
+        self.msg_image_rect = None
 
         self.prep_msg(msg)
 

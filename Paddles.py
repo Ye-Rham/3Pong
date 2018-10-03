@@ -1,8 +1,10 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class MidPaddle1(Sprite):
     def __init__(self, settings, screen):
+        super(MidPaddle1, self).__init__()
         self.screen = screen
         self.width = settings.vertical_paddle_width
         self.height = settings.vertical_paddle_height
@@ -31,10 +33,12 @@ class MidPaddle1(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centery
+        self.rect.centery = self.center
 
 
 class TopPaddle1(Sprite):
     def __init__(self, settings, screen):
+        super(TopPaddle1, self).__init__()
         self.screen = screen
         self.width = settings.horizontal_paddle_width
         self.height = settings.horizontal_paddle_height
@@ -63,10 +67,12 @@ class TopPaddle1(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centerx/2
+        self.rect.centerx = self.center
 
 
 class BottomPaddle1(Sprite):
     def __init__(self, settings, screen):
+        super(BottomPaddle1, self).__init__()
         self.screen = screen
         self.width = settings.horizontal_paddle_width
         self.height = settings.horizontal_paddle_height
@@ -95,10 +101,12 @@ class BottomPaddle1(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centerx/2
+        self.rect.centerx = self.center
 
 
 class MidPaddle2(Sprite):
     def __init__(self, settings, screen):
+        super(MidPaddle2, self).__init__()
         self.screen = screen
         self.width = settings.vertical_paddle_width
         self.height = settings.vertical_paddle_height
@@ -127,10 +135,12 @@ class MidPaddle2(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centery
+        self.rect.centery = self.center
 
 
 class TopPaddle2(Sprite):
     def __init__(self, settings, screen):
+        super(TopPaddle2, self).__init__()
         self.screen = screen
         self.width = settings.horizontal_paddle_width
         self.height = settings.horizontal_paddle_height
@@ -159,10 +169,12 @@ class TopPaddle2(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centerx * 1.5
+        self.rect.centerx = self.center
 
 
 class BottomPaddle2(Sprite):
     def __init__(self, settings, screen):
+        super(BottomPaddle2, self).__init__()
         self.screen = screen
         self.width = settings.horizontal_paddle_width
         self.height = settings.horizontal_paddle_height
@@ -191,3 +203,4 @@ class BottomPaddle2(Sprite):
 
     def center_paddle(self):
         self.center = self.screen_rect.centerx * 1.5
+        self.rect.centerx = self.center

@@ -1,4 +1,7 @@
-class Settings():
+import random
+
+
+class Settings:
     def __init__(self):
         self.screen_width = 1200
         self.screen_height = 800
@@ -20,13 +23,15 @@ class Settings():
         self.horizontal_paddle_speed = self.screen_width/666
 
         self.ball_speedup = 1.05
+        self.ball_rise = None
+        self.ball_run = None
+        self.ball_speed = None
 
         self.game_start = False
 
         self.initialize_dynamic_settings()
 
-
     def initialize_dynamic_settings(self):
-        self.ball_rise = 1
-        self.ball_run = 1
-        self.ball_speed = 1
+        self.ball_rise = (random.randint(4, 7) * ((-1)**random.randint(1, 2)))/7
+        self.ball_run = (random.randint(4, 7) * ((-1)**random.randint(1, 2)))/7
+        self.ball_speed = random.uniform(1.5, 2.5)

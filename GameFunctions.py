@@ -2,6 +2,7 @@ import sys
 import pygame
 from time import sleep
 
+
 def check_keydown_events(event, midpaddle1, toppaddle1, bottompaddle1):
     if event.key == pygame.K_LEFT:
         toppaddle1.moving_left = True
@@ -13,6 +14,7 @@ def check_keydown_events(event, midpaddle1, toppaddle1, bottompaddle1):
         midpaddle1.moving_up = True
     elif event.key == pygame.K_DOWN:
         midpaddle1.moving_down = True
+
 
 def check_keyup_events(event, midpaddle1, toppaddle1, bottompaddle1):
     if event.key == pygame.K_LEFT:
@@ -26,6 +28,7 @@ def check_keyup_events(event, midpaddle1, toppaddle1, bottompaddle1):
     elif event.key == pygame.K_DOWN:
         midpaddle1.moving_down = False
 
+
 def check_events(settings, play_button, midpaddle1, toppaddle1, bottompaddle1):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -38,15 +41,13 @@ def check_events(settings, play_button, midpaddle1, toppaddle1, bottompaddle1):
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(settings, play_button, mouse_x, mouse_y)
 
+
 def check_play_button(settings, play_button, mouse_x, mouse_y):
-    if(play_button.rect.collidepoint(mouse_x, mouse_y)):
+    if play_button.rect.collidepoint(mouse_x, mouse_y):
         settings.game_start = True
 
-def update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2, bottompaddle2,\
-                  score1, score2):
-    screen.fill(settings.bg_color)
-    pygame.draw.rect(screen, (50, 50, 50),
-                     pygame.Rect(ball.screen_rect.centerx, 0, 1, settings.screen_height))
+
+def update_game(settings, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2, bottompaddle2):
     check_vertical_paddle_collision(settings, ball, midpaddle1, midpaddle2)
     check_horizontal_paddle_collision(settings, ball, toppaddle1, bottompaddle1, toppaddle2, bottompaddle2)
     ball.update()
@@ -56,6 +57,12 @@ def update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1,
     midpaddle2.update()
     toppaddle2.update()
     bottompaddle2.update()
+
+
+def update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2, bottompaddle2,
+                  score1, score2):
+    screen.fill(settings.bg_color)
+    pygame.draw.rect(screen, (50, 50, 50), pygame.Rect(ball.screen_rect.centerx, 0, 1, settings.screen_height))
     score1.draw()
     score2.draw()
     midpaddle1.draw()
@@ -68,71 +75,77 @@ def update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1,
 
     pygame.display.flip()
 
+
 def check_vertical_paddle_collision(settings, ball, midpaddle1, midpaddle2):
-    if pygame.sprite.collide_rect(ball, midpaddle1)\
-            or pygame.sprite.collide_rect(ball, midpaddle2):
+    a = pygame.sprite.collide_rect(ball, midpaddle1)
+    b = pygame.sprite.collide_rect(ball, midpaddle2)
+    if a or b:
         ball.speed *= settings.ball_speedup
-        if ball.rect.left == midpaddle1.rect.right - 1 or ball.rect.right == midpaddle2.rect.left + 1:
-            ball.run *= -1
-            if ((midpaddle1.moving_up or midpaddle2.moving_up) and ball.rise < 0)\
-                or (midpaddle1.moving_down or midpaddle2.moving_down) and ball.rise > 0:
-                ball.rise *= 1.25
-            if ((midpaddle1.moving_up or midpaddle2.moving_up) and ball.rise > 0)\
-                or (midpaddle1.moving_down or midpaddle2.moving_down) and ball.rise < 0:
-                ball.rise *= 0.75
-        else:
-            ball.rise *= -1
+        ball.run *= -1
+        bounce_sfx = pygame.mixer.Sound('Pong Bounce.wav')
+        bounce_sfx.play()
+        if (((midpaddle1.moving_up and a) or (midpaddle2.moving_up and b)) and ball.rise < 0) \
+                or ((midpaddle1.moving_down and a) or (midpaddle2.moving_down and b)) and ball.rise > 0:
+            ball.rise *= 1.25
+
+        elif (((midpaddle1.moving_up and a) or (midpaddle2.moving_up and b)) and ball.rise > 0) \
+                or ((midpaddle1.moving_down and a) or (midpaddle2.moving_down and b)) and ball.rise < 0:
+            ball.rise *= 0.75
+
 
 def check_horizontal_paddle_collision(settings, ball, toppaddle1, bottompaddle1, toppaddle2, bottompaddle2):
-    if(pygame.sprite.collide_rect(ball, toppaddle1)\
-            or pygame.sprite.collide_rect(ball, bottompaddle1)\
-            or pygame.sprite.collide_rect(ball, toppaddle2)\
-            or pygame.sprite.collide_rect(ball, bottompaddle2)):
-            ball.speed *= settings.ball_speedup
-            if ball.rect.top == toppaddle1.rect.bottom - 1 or ball.rect.bottom == bottompaddle1.rect.top + 1:
-                ball.rise *= -1
-                if((toppaddle1.moving_left or toppaddle2.moving_left\
-                        or bottompaddle1.moving_left or bottompaddle2.moving_left) and ball.run < 0\
-                        or (toppaddle1.moving_right or toppaddle2.moving_right\
-                        or bottompaddle2.moving_right or bottompaddle2.moving_right) and ball.run > 0):
-                        ball.run *= 1.25
-                if ((toppaddle1.moving_left or toppaddle2.moving_left \
-                        or bottompaddle1.moving_left or bottompaddle2.moving_left) and ball.run > 0 \
-                        or (toppaddle1.moving_right or toppaddle2.moving_right \
-                        or bottompaddle2.moving_right or bottompaddle2.moving_right) and ball.run < 0):
-                        ball.run *= 0.75
-            else:
-                ball.run *= -1
+    a = pygame.sprite.collide_rect(ball, toppaddle1)
+    b = pygame.sprite.collide_rect(ball, bottompaddle1)
+    c = pygame.sprite.collide_rect(ball, toppaddle2)
+    d = pygame.sprite.collide_rect(ball, bottompaddle2)
+    if a or b or c or d:
+        ball.speed *= settings.ball_speedup
+        ball.rise *= -1
+        bounce_sfx = pygame.mixer.Sound('Pong Bounce.wav')
+        bounce_sfx.play()
+        if (((toppaddle1.moving_left and (a or b))
+             or (toppaddle2.moving_left and (c or d))) and ball.run < 0
+                or (toppaddle1.moving_right and (a or b)
+                    or (toppaddle2.moving_right and (c or d))) and ball.run > 0):
+            ball.run *= 1.25
 
-def check_score(settings, screen, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2, bottompaddle2,\
+        elif (((toppaddle1.moving_left and (a or b))
+               or (toppaddle2.moving_left and (c or d))) and ball.run > 0
+              or (toppaddle1.moving_right and (a or b)
+                  or (toppaddle2.moving_right and (c or d))) and ball.run < 0):
+            ball.run *= 0.75
+
+
+def check_score(settings, screen, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2, bottompaddle2,
                 score1, score2):
-    if(ball.rect.right >= ball.screen_rect.right or ball.rect.left <= ball.screen_rect.left\
+    if (ball.rect.right >= ball.screen_rect.right or ball.rect.left <= ball.screen_rect.left
             or ball.rect.bottom >= ball.screen_rect.bottom or ball.rect.top <= ball.screen_rect.top):
-            if ball.centerx > ball.screen_rect.centerx:
-                score1.points += 1
-                score1.prep_msg(str(score1.points))
-            else:
-                score2.points += 1
-                score2.prep_msg(str(score2.points))
-            ball.reset_ball(settings)
-            midpaddle1.center_paddle()
-            toppaddle1.center_paddle()
-            bottompaddle1.center_paddle()
-            midpaddle2.center_paddle()
-            toppaddle2.center_paddle()
-            bottompaddle2.center_paddle()
-            settings.initialize_dynamic_settings()
-            update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2,\
-                          bottompaddle2, score1, score2)
-            sleep(3)
+        if ball.centerx > ball.screen_rect.centerx:
+            score1.points += 1
+            score1.prep_msg(str(score1.points))
+        else:
+            score2.points += 1
+            score2.prep_msg(str(score2.points))
+        settings.initialize_dynamic_settings()
+        ball.reset_ball(settings)
+        midpaddle1.center_paddle()
+        toppaddle1.center_paddle()
+        bottompaddle1.center_paddle()
+        midpaddle2.center_paddle()
+        toppaddle2.center_paddle()
+        bottompaddle2.center_paddle()
+        update_screen(screen, settings, ball, midpaddle1, toppaddle1, bottompaddle1, midpaddle2, toppaddle2,
+                      bottompaddle2, score1, score2)
+        sleep(3)
+
 
 def ai_directives(ball, midpaddle2, toppaddle2, bottompaddle2):
     if ball.rect.center < ball.screen_rect.center:
-        if midpaddle2.rect.centery < midpaddle2.screen_rect.centery:
+        if midpaddle2.rect.centery > midpaddle2.screen_rect.centery:
             midpaddle2.moving_up = True
         else:
             midpaddle2.moving_up = False
-        if midpaddle2.rect.centery > midpaddle2.screen_rect.centery:
+        if midpaddle2.rect.centery < midpaddle2.screen_rect.centery:
             midpaddle2.moving_down = True
         else:
             midpaddle2.moving_down = False
